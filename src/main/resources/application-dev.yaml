@@ -1,0 +1,9 @@
+quarkus:
+  datasource:
+    devservices:
+      port: 5432
+  hibernate-orm:
+    database:
+      generation: update
+    dev-ui:
+      allow-hql: true
