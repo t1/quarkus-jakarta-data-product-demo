@@ -1,0 +1,3 @@
+Simplistic demo of how to migrate a Quarkus app to Jakarta Data.
+
+The crucial part is in the `pom.xml` file, where the annotation processor is added (among other things).
