@@ -2,7 +2,6 @@ package com.github.t1.products;
 
 import com.github.t1.problemdetail.Status;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -13,7 +12,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 
 import java.util.List;
-import java.util.Optional;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
@@ -22,26 +20,22 @@ import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 @Produces(APPLICATION_JSON)
 @Consumes(APPLICATION_JSON)
 public class Products {
-    @Inject EntityManager entityManager;
+    @Inject ProductsRepository repo;
 
-    @GET public List<Product> list() {
-        return entityManager.createQuery("FROM Product", Product.class).getResultList();
-    }
+    @GET public List<Product> list() {return repo.findAll().toList();}
 
     @GET @Path("/{id}") public Product get(@PathParam("id") long id) {
-        return Optional.ofNullable(entityManager.find(Product.class, id))
-                .orElseThrow(() -> new ProductNotFoundException(id));
+        return repo.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Transactional
     @POST public Product create(Product product) {
-        entityManager.persist(product);
-        return product;
+        return repo.insert(product);
     }
 
     @Transactional
     @DELETE @Path("/{id}") public void delete(@PathParam("id") long id) {
-        entityManager.remove(get(id));
+        repo.deleteById(id);
     }
 
     @Status(NOT_FOUND)
